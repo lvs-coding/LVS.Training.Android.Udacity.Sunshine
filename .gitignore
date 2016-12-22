@@ -38,3 +38,6 @@ captures/
 
 # Keystore files
 *.jks
+
+# API Key
+app/src/main/res/values/keys.xml
