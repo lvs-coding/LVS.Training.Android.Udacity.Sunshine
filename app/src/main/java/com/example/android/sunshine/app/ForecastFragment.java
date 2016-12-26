@@ -117,7 +117,6 @@ public class ForecastFragment extends Fragment implements FetchWeatherRequest {
     @Override
     public void requestDone(String[] jsonResponse) {
         forecastJson = jsonResponse;
-        Log.d(Constants.V_LOG_TAG + LOG_TAG,forecastJson.toString());
         ArrayList<String> lst = new ArrayList<>(Arrays.asList(forecastJson));
 
        mForecastAdapter.clear();

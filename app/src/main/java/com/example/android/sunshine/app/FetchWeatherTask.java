@@ -25,7 +25,7 @@ public class FetchWeatherTask extends AsyncTask<String, Integer, String[]> {
     public FetchWeatherRequest response = null;
 
     protected void onPreExecute() {
-        Log.d(Constants.V_LOG_TAG + LOG_TAG, MSG_FETCHING_DATA);
+
     }
 
     protected String[] doInBackground(String... params) {
@@ -69,7 +69,6 @@ public class FetchWeatherTask extends AsyncTask<String, Integer, String[]> {
                     .build();
 
             URL url = new URL(builtUri.toString());
-            Log.d(LOG_TAG,url.toString());
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -193,9 +192,6 @@ public class FetchWeatherTask extends AsyncTask<String, Integer, String[]> {
             resultStrs[i] = day + " - " + description + " - " + highAndLow;
         }
 
-        for (String s : resultStrs) {
-            Log.v(LOG_TAG, "Forecast entry: " + s);
-        }
         return resultStrs;
 
     }
