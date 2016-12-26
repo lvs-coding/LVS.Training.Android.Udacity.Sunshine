@@ -18,6 +18,7 @@ import java.util.Arrays;
 
 public class ForecastFragment extends Fragment implements FetchWeatherRequest {
     private static String LOG_TAG = ForecastFragment.class.getSimpleName();
+    String apiUrl;
 
     private static String appId = "";
     // Will contain the raw JSON response as a string.
@@ -25,6 +26,7 @@ public class ForecastFragment extends Fragment implements FetchWeatherRequest {
     private ArrayAdapter<String> mForecastAdapter;
     ArrayList<String> weekForecast;
     private ListView mListView;
+    private static final String postcode="94043";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,9 @@ public class ForecastFragment extends Fragment implements FetchWeatherRequest {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
+            FetchWeatherTask request = new FetchWeatherTask();
+            request.response = this;
+            request.execute(postcode);
             return true;
         }
 
@@ -85,13 +90,13 @@ public class ForecastFragment extends Fragment implements FetchWeatherRequest {
         // Get OpenWeather API key
         appId = getResources().getString(R.string.APPID);
 
+
+
         // Construct the URL for the OpenWeatherMap query
         // Possible parameters are avaiable at OWM's forecast API page, at
         // http://openweathermap.org/API#forecast
-        String url = "http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7&APPID=" + appId;
-        FetchWeatherTask request = new FetchWeatherTask();
-        request.response = this;
-        request.execute(url);
+        apiUrl = "http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7&APPID=" + appId;
+
 
         return rootView;
     }
