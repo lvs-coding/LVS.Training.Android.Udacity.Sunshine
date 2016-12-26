@@ -1,7 +1,10 @@
 package com.example.android.sunshine.app;
 
+import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -12,8 +15,18 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 
 public class ForecastFragment extends Fragment implements FetchWeatherRequest {
@@ -22,7 +35,7 @@ public class ForecastFragment extends Fragment implements FetchWeatherRequest {
 
     private static String appId = "";
     // Will contain the raw JSON response as a string.
-    String forecastJsonStr = null;
+    String[] forecastJson = null;
     private ArrayAdapter<String> mForecastAdapter;
     ArrayList<String> weekForecast;
     private ListView mListView;
@@ -102,8 +115,27 @@ public class ForecastFragment extends Fragment implements FetchWeatherRequest {
     }
 
     @Override
-    public void requestDone(String jsonResponse) {
-        forecastJsonStr = jsonResponse;
-        Log.d(Constants.V_LOG_TAG + LOG_TAG,forecastJsonStr);
+    public void requestDone(String[] jsonResponse) {
+        forecastJson = jsonResponse;
+        Log.d(Constants.V_LOG_TAG + LOG_TAG,forecastJson.toString());
+        ArrayList<String> lst = new ArrayList<>(Arrays.asList(forecastJson));
+
+       mForecastAdapter.clear();
+
+        if(Build.VERSION.SDK_INT >=11) {
+            mForecastAdapter.addAll(lst);
+        } else {
+            for (int i = 0; i < lst.size(); i++){
+                mForecastAdapter.add(lst.get(i));
+            }
+        }
+
+
+        mForecastAdapter.notifyDataSetChanged();
     }
+
+
+
+
+
 }

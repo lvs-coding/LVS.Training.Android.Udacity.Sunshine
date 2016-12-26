@@ -5,5 +5,5 @@ package com.example.android.sunshine.app;
  */
 
 public interface FetchWeatherRequest {
-    void requestDone(String output);
+    void requestDone(String[] output);
 }
