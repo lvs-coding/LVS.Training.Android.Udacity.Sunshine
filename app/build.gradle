@@ -8,7 +8,7 @@ android {
         minSdkVersion 10git
         targetSdkVersion 25
         versionCode 1
-        versionName "1.01"
+        versionName "1.02"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -16,7 +16,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        buildTypes.each {
+            it.buildConfigField 'String', 'APP_ID', "\"9fd759d3840fb44a3f989e719d37e857\""
+        }
     }
+
 }
 
 dependencies {
