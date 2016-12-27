@@ -45,9 +45,9 @@ public class FetchWeatherTask extends AsyncTask<String, Integer, String[]> {
         // Will contain the raw JSON response as a string.
         String forecastJsonStr = null;
 
-        String format = "json";
-        String units = "metric";
-        int numDays = 7;
+        final String format = "json";
+        final String units = "metric";
+        final int numDays = 7;
 
         try {
             //Construct the URL for the OpenWeatherMap Query
@@ -93,7 +93,7 @@ public class FetchWeatherTask extends AsyncTask<String, Integer, String[]> {
             }
             forecastJsonStr = buffer.toString(); // All data in one String
 
-            forecast = getWeatherDataFromJson(forecastJsonStr,7);
+            forecast = getWeatherDataFromJson(forecastJsonStr,numDays);
 
 
 

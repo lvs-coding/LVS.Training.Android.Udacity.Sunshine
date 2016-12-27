@@ -116,21 +116,21 @@ public class ForecastFragment extends Fragment implements FetchWeatherRequest {
 
     @Override
     public void requestDone(String[] jsonResponse) {
-        forecastJson = jsonResponse;
-        ArrayList<String> lst = new ArrayList<>(Arrays.asList(forecastJson));
+        if(jsonResponse != null) {
 
-       mForecastAdapter.clear();
+            forecastJson = jsonResponse;
+            ArrayList<String> lst = new ArrayList<>(Arrays.asList(forecastJson));
 
-        if(Build.VERSION.SDK_INT >=11) {
-            mForecastAdapter.addAll(lst);
-        } else {
-            for (int i = 0; i < lst.size(); i++){
-                mForecastAdapter.add(lst.get(i));
+            mForecastAdapter.clear();
+
+            if (Build.VERSION.SDK_INT >= 11) {
+                mForecastAdapter.addAll(lst);
+            } else {
+                for (int i = 0; i < lst.size(); i++) {
+                    mForecastAdapter.add(lst.get(i));
+                }
             }
         }
-
-
-        mForecastAdapter.notifyDataSetChanged();
     }
 
 
