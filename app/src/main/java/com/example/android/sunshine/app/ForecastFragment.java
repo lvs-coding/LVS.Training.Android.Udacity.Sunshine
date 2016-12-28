@@ -1,7 +1,12 @@
 package com.example.android.sunshine.app;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.format.Time;
@@ -12,8 +17,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,30 +35,45 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
 
 
 public class ForecastFragment extends Fragment implements FetchWeatherRequest {
     private static String LOG_TAG = ForecastFragment.class.getSimpleName();
-    String apiUrl;
 
-    private static String appId = "";
     // Will contain the raw JSON response as a string.
     String[] forecastJson = null;
     private ArrayAdapter<String> mForecastAdapter;
-    ArrayList<String> weekForecast;
-    private ListView mListView;
-    private static final String postcode="94043";
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu,
                                     MenuInflater inflater) {
         inflater.inflate(R.menu.forecastfragment, menu);
+    }
+
+    private void updateWeather() {
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+
+        String location = PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .getString(getString(R.string.pref_location_key),getString(R.string.pref_location_default));
+
+        weatherTask.response = this;
+        weatherTask.execute(location);
     }
 
     @Override
@@ -62,9 +85,7 @@ public class ForecastFragment extends Fragment implements FetchWeatherRequest {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            FetchWeatherTask request = new FetchWeatherTask();
-            request.response = this;
-            request.execute(postcode);
+            updateWeather();
             return true;
         }
 
@@ -74,18 +95,6 @@ public class ForecastFragment extends Fragment implements FetchWeatherRequest {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-        //=== Add fake data
-        weekForecast = new ArrayList<>(Arrays.asList(
-                "Today - Sunny - 88/63",
-                "Tomorrow - Foggy - 70/40",
-                "Weds - Cloudy - 72/63",
-                "Thurs - Asteroids - 75/65",
-                "Fri - Heavy Rain - 65/56",
-                "Sat - HELP TRAPPED IN WEATHERSTATION - 60/51",
-                "Sun - Sunny - 80/68")
-        );
 
         mForecastAdapter = new ArrayAdapter<>(
                 // The current context (this fragment parent activity)
@@ -95,20 +104,24 @@ public class ForecastFragment extends Fragment implements FetchWeatherRequest {
                 // ID of the textview to populate
                 R.id.list_item_forecast_textview,
                 // Data
-                weekForecast);
+                new ArrayList<String>());
 
-        mListView = (ListView)rootView.findViewById(R.id.listview_forecast);
-        mListView.setAdapter(mForecastAdapter);
-
-        // Get OpenWeather API key
-        appId = getResources().getString(R.string.APPID);
+        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
 
+        ListView listview = (ListView)rootView.findViewById(R.id.listview_forecast);
+        listview.setAdapter(mForecastAdapter);
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                String forecast  = mForecastAdapter.getItem(position);
+                Intent intent = new Intent(getActivity(),DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT,forecast);
+                startActivity(intent);
 
-        // Construct the URL for the OpenWeatherMap query
-        // Possible parameters are avaiable at OWM's forecast API page, at
-        // http://openweathermap.org/API#forecast
-        apiUrl = "http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7&APPID=" + appId;
+            }
+        });
+
 
 
         return rootView;
